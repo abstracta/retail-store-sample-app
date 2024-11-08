@@ -21,6 +21,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import agent from 'skywalking-backend-js';
+
+agent.start();
 
 async function bootstrap() {
   // Start SDK before nestjs factory create

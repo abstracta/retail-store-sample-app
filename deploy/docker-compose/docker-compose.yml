@@ -13,9 +13,6 @@
 # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-version: "2"
-
 services:
   ui:
     ports:
@@ -29,15 +26,20 @@ services:
       - ENDPOINTS_CHECKOUT=http://checkout:8080
       - ENDPOINTS_ASSETS=http://assets:8080
     hostname: ui
-    image: retail-store-sample-ui:${TAG:-latest}
+    build: ../../src/ui
     restart: always
     mem_limit: 512m
     cap_drop:
       - ALL
+    networks:
+      - retail-network
+    depends_on:
+      oap:
+        condition: service_healthy
 
   catalog:
     hostname: catalog
-    image: retail-store-sample-catalog:${TAG:-latest}
+    build: ../../src/catalog
     restart: always
     environment:
       - GIN_MODE=release
@@ -45,6 +47,11 @@ services:
     mem_limit: 128m
     cap_drop:
       - ALL
+    networks:
+      - retail-network
+    depends_on:
+      oap:
+        condition: service_healthy
 
   catalog-db:
     image: mariadb:10.9
@@ -57,10 +64,12 @@ services:
       - MYSQL_USER=catalog_user
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     mem_limit: 128m
+    networks:
+      - retail-network
 
   carts:
     hostname: carts
-    image: retail-store-sample-cart:${TAG:-latest}
+    build: ../../src/cart
     restart: always
     environment:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
@@ -73,16 +82,23 @@ services:
     mem_limit: 256m
     cap_drop:
       - ALL
+    networks:
+      - retail-network
+    depends_on:
+      oap:
+        condition: service_healthy
 
   carts-db:
     image: amazon/dynamodb-local:1.20.0
     hostname: carts-db
     restart: always
     mem_limit: 256m
+    networks:
+      - retail-network
 
   orders:
     hostname: orders
-    image: retail-store-sample-orders:${TAG:-latest}
+    build: ../../src/orders
     restart: always
     environment:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
@@ -95,6 +111,11 @@ services:
     mem_limit: 512m
     cap_drop:
       - ALL
+    networks:
+      - retail-network
+    depends_on:
+      oap:
+        condition: service_healthy
 
   orders-db:
     image: postgres:16.1
@@ -113,9 +134,11 @@ services:
       timeout: 5s
       retries: 30
     mem_limit: 128m
+    networks:
+      - retail-network
 
   checkout:
-    image: retail-store-sample-checkout:${TAG:-latest}
+    build: ../../src/checkout
     hostname: checkout
     restart: always
     read_only: true
@@ -127,25 +150,115 @@ services:
     mem_limit: 256m
     cap_drop:
       - ALL
+    networks:
+      - retail-network
+    depends_on:
+      oap:
+        condition: service_healthy
 
   checkout-redis:
     image: redis:6-alpine
     hostname: checkout-redis
     restart: always
     mem_limit: 128m
+    networks:
+      - retail-network
 
   assets:
     hostname: assets
     environment:
       - PORT=8080
-    image: retail-store-sample-assets:${TAG:-latest}
+    build: ../../src/assets
     restart: always
     mem_limit: 64m
     cap_drop:
       - ALL
+    networks:
+      - retail-network
+    depends_on:
+      oap:
+        condition: service_healthy
 
   rabbitmq:
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - retail-network
+
+  oap:
+      image: apache/skywalking-oap-server:latest
+      container_name: oap
+      ports:
+        - 11800:11800
+        - 12800:12800
+      environment:
+        - SW_STORAGE=elasticsearch
+        - SW_STORAGE_ES_CLUSTER_NODES=es:9200
+        - SW_HEALTH_CHECKER=default
+      depends_on:
+        es:
+          condition: service_healthy
+      healthcheck:
+        test: ["CMD-SHELL", "curl -f http://localhost:12800/healthcheck || exit 1"]
+        interval: 10s
+        timeout: 5s
+        retries: 10
+      networks:
+        - retail-network
+
+  skywalking-ui:
+    image: apache/skywalking-ui:latest
+    container_name: skywalking-ui
+    ports:
+      - 8081:8080
+    environment:
+      - SW_OAP_ADDRESS=http://oap:12800
+    depends_on:
+      oap:
+        condition: service_healthy
+    networks:
+      - retail-network
+
+  es:
+    image: elasticsearch:7.17.25
+    container_name: es
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1g
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    networks:
+      - retail-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d 
+    depends_on:
+      - oap
+    networks:
+      - retail-network
+
+volumes:
+  es-data:
+
+networks:
+  retail-network:
+    driver: bridge

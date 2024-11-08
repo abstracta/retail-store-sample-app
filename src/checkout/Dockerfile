@@ -37,4 +37,7 @@ USER appuser
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
+ENV SW_AGENT_NAME=checkout
+ENV SW_AGENT_COLLECTOR_BACKEND_SERVICES=oap:11800
+
 ENTRYPOINT [ "node", "dist/main.js" ]

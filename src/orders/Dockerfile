@@ -35,10 +35,10 @@ FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 RUN dnf --setopt=install_weak_deps=False install -q -y \
     java-17-amazon-corretto-headless \
     shadow-utils \
+    tar \
+    gzip \
     && \
     dnf clean all
-
-ARG aws_opentelemetry_agent_version=1.24.0
 
 ENV APPUSER=appuser
 ENV APPUID=1000
@@ -51,10 +51,14 @@ RUN useradd \
     --uid "$APPUID" \
     "$APPUSER"
 
-RUN curl -L https://github.com/aws-observability/aws-otel-java-instrumentation/releases/download/v${aws_opentelemetry_agent_version}/aws-opentelemetry-agent.jar -o /opt/aws-opentelemetry-agent.jar && \
-    curl -L https://raw.githubusercontent.com/aws-observability/aws-otel-java-instrumentation/v${aws_opentelemetry_agent_version}/licenses/licenses.md -o aws-opentelemetry-agent-licenses.md
-ENV JAVA_TOOL_OPTIONS=-javaagent:/opt/aws-opentelemetry-agent.jar
-ENV OTEL_JAVAAGENT_ENABLED=false
+ARG SKYWALKING_AGENT_VERSION=9.3.0
+RUN curl -L https://dlcdn.apache.org/skywalking/java-agent/${SKYWALKING_AGENT_VERSION}/apache-skywalking-java-agent-${SKYWALKING_AGENT_VERSION}.tgz -o /tmp/skywalking-agent.tgz && \
+    tar -xzf /tmp/skywalking-agent.tgz -C /opt/ && \
+    rm /tmp/skywalking-agent.tgz
+RUN chown -R appuser:appuser /opt/skywalking-agent
+
+ENV SW_AGENT_NAME=orders
+ENV SW_AGENT_COLLECTOR_BACKEND_SERVICES=oap:11800
 
 WORKDIR /app
 USER appuser
@@ -64,4 +68,4 @@ COPY --chown=appuser:appuser --from=build-env /app.jar .
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -javaagent:/opt/skywalking-agent/skywalking-agent.jar -jar /app/app.jar"]
