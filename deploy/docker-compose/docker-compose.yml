@@ -14,9 +14,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 services:
-  ui:
+  nginx:
+    image: nginx:1.27
     ports:
-      - 8888:8080
+      - "8080:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      ui:
+        condition: service_started
+      skywalking-oap:
+        condition: service_healthy
+  ui:
     environment:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=true
@@ -25,32 +34,30 @@ services:
       - ENDPOINTS_ORDERS=http://orders:8080
       - ENDPOINTS_CHECKOUT=http://checkout:8080
       - ENDPOINTS_ASSETS=http://assets:8080
+      - SW_AGENT_COLLECTOR_BACKEND_SERVICES=skywalking-oap:11800
     hostname: ui
-    build: ../../src/ui
+    image: retail-store-sample-ui:${TAG:-latest}
     restart: always
     mem_limit: 512m
     cap_drop:
       - ALL
-    networks:
-      - retail-network
     depends_on:
-      oap:
+      skywalking-oap:
         condition: service_healthy
 
   catalog:
     hostname: catalog
-    build: ../../src/catalog
+    image: retail-store-sample-catalog:${TAG:-latest}
     restart: always
     environment:
       - GIN_MODE=release
       - DB_PASSWORD=${MYSQL_PASSWORD}
+      - SW_AGENT_REPORTER_GRPC_BACKEND_SERVICE=skywalking-oap:11800
     mem_limit: 128m
     cap_drop:
       - ALL
-    networks:
-      - retail-network
     depends_on:
-      oap:
+      skywalking-oap:
         condition: service_healthy
 
   catalog-db:
@@ -64,12 +71,10 @@ services:
       - MYSQL_USER=catalog_user
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     mem_limit: 128m
-    networks:
-      - retail-network
 
   carts:
     hostname: carts
-    build: ../../src/cart
+    image: retail-store-sample-cart:${TAG:-latest}
     restart: always
     environment:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
@@ -79,13 +84,12 @@ services:
       - CARTS_DYNAMODB_CREATETABLE=true
       - AWS_ACCESS_KEY_ID=key
       - AWS_SECRET_ACCESS_KEY=dummy
+      - SW_AGENT_COLLECTOR_BACKEND_SERVICES=skywalking-oap:11800
     mem_limit: 256m
     cap_drop:
       - ALL
-    networks:
-      - retail-network
     depends_on:
-      oap:
+      skywalking-oap:
         condition: service_healthy
 
   carts-db:
@@ -93,12 +97,10 @@ services:
     hostname: carts-db
     restart: always
     mem_limit: 256m
-    networks:
-      - retail-network
 
   orders:
     hostname: orders
-    build: ../../src/orders
+    image: retail-store-sample-orders:${TAG:-latest}
     restart: always
     environment:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
@@ -108,13 +110,12 @@ services:
       - SPRING_DATASOURCE_USERNAME=orders_user
       - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
       - SPRING_RABBITMQ_HOST=rabbitmq
+      - SW_AGENT_COLLECTOR_BACKEND_SERVICES=skywalking-oap:11800
     mem_limit: 512m
     cap_drop:
       - ALL
-    networks:
-      - retail-network
     depends_on:
-      oap:
+      skywalking-oap:
         condition: service_healthy
 
   orders-db:
@@ -134,11 +135,9 @@ services:
       timeout: 5s
       retries: 30
     mem_limit: 128m
-    networks:
-      - retail-network
 
   checkout:
-    build: ../../src/checkout
+    image: retail-store-sample-checkout:${TAG:-latest}
     hostname: checkout
     restart: always
     read_only: true
@@ -147,13 +146,12 @@ services:
     environment:
       - REDIS_URL=redis://checkout-redis:6379
       - ENDPOINTS_ORDERS=http://orders:8080
+      - SW_AGENT_COLLECTOR_BACKEND_SERVICES=skywalking-oap:11800
     mem_limit: 256m
     cap_drop:
       - ALL
-    networks:
-      - retail-network
     depends_on:
-      oap:
+      skywalking-oap:
         condition: service_healthy
 
   checkout-redis:
@@ -161,38 +159,25 @@ services:
     hostname: checkout-redis
     restart: always
     mem_limit: 128m
-    networks:
-      - retail-network
 
   assets:
     hostname: assets
     environment:
       - PORT=8080
-    build: ../../src/assets
+    image: retail-store-sample-assets:${TAG:-latest}
     restart: always
     mem_limit: 64m
     cap_drop:
       - ALL
-    networks:
-      - retail-network
-    depends_on:
-      oap:
-        condition: service_healthy
 
   rabbitmq:
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
       - "15672:15672"
-    networks:
-      - retail-network
 
-  oap:
-      image: apache/skywalking-oap-server:latest
-      container_name: oap
-      ports:
-        - 11800:11800
-        - 12800:12800
+  skywalking-oap:
+      image: apache/skywalking-oap-server:10.1.0
       environment:
         - SW_STORAGE=elasticsearch
         - SW_STORAGE_ES_CLUSTER_NODES=es:9200
@@ -205,21 +190,17 @@ services:
         interval: 10s
         timeout: 5s
         retries: 10
-      networks:
-        - retail-network
 
   skywalking-ui:
-    image: apache/skywalking-ui:latest
+    image: apache/skywalking-ui:10.1.0
     container_name: skywalking-ui
     ports:
       - 8081:8080
     environment:
-      - SW_OAP_ADDRESS=http://oap:12800
+      - SW_OAP_ADDRESS=http://skywalking-oap:12800
     depends_on:
-      oap:
+      skywalking-oap:
         condition: service_healthy
-    networks:
-      - retail-network
 
   es:
     image: elasticsearch:7.17.25
@@ -236,29 +217,11 @@ services:
     mem_limit: 1g
     volumes:
       - es-data:/usr/share/elasticsearch/data
-    networks:
-      - retail-network
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    ports:
-      - "8080:80"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d 
-    depends_on:
-      - oap
-    networks:
-      - retail-network
-
 volumes:
   es-data:
-
-networks:
-  retail-network:
-    driver: bridge
