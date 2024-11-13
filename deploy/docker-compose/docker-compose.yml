@@ -179,11 +179,11 @@ services:
   skywalking-oap:
       image: apache/skywalking-oap-server:10.1.0
       environment:
-        - SW_STORAGE=elasticsearch
-        - SW_STORAGE_ES_CLUSTER_NODES=es:9200
+        - SW_STORAGE=banyandb
+        - SW_STORAGE_BANYANDB_TARGETS=banyandb:17912
         - SW_HEALTH_CHECKER=default
       depends_on:
-        es:
+        banyandb:
           condition: service_healthy
       healthcheck:
         test: ["CMD-SHELL", "curl -f http://localhost:12800/healthcheck || exit 1"]
@@ -202,26 +202,14 @@ services:
       skywalking-oap:
         condition: service_healthy
 
-  es:
-    image: elasticsearch:7.17.25
-    container_name: es
+  banyandb:
+    image: apache/skywalking-banyandb:0.7.0
+    container_name: banyandb
     ports:
-      - 9200:9200
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    mem_limit: 1g
-    volumes:
-      - es-data:/usr/share/elasticsearch/data
+      - 17912:17912
+    command: standalone
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  es-data:
+      test: ["CMD", "./bydbctl", "health", "--config=-", "--addr=http://localhost:17913"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
