@@ -11,21 +11,28 @@ scenarios:
     flow:
       - get:
           url: "/home"
+      - think: 1
       - get:
           url: "/catalog"
+      - think: 2
       - loop:
           - get:
               url: "/catalog/{{ $loopElement }}"
+          - think: 1
         over: allProducts
+      - think: 1
       - post:
           url: "/cart"
           beforeRequest: setRandomProductId
           form:
             productId: "dummy"
+      - think: 1
       - get:
           url: "/cart"
+      - think: 2
       - get:
           url: "/checkout"
+      - think: 3
       - post:
           url: "/checkout"
           form:
@@ -33,13 +40,15 @@ scenarios:
             lastName: Doe
             email: jdoe789@example.com
             address1: 123 Main Street
-            address2: 
+            address2:
             city: New York
             state: NY
             zip: 12345
+      - think: 2
       - post:
           url: "/checkout/delivery"
           form:
             token: priority-mail
+      - think: 2
       - post:
           url: "/checkout/confirm"
