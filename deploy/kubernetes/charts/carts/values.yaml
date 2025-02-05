@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: public.ecr.aws/aws-containers/retail-store-sample-cart
   pullPolicy: IfNotPresent
-  tag: 0.8.2
+  tag: 0.8.4
   
 imagePullSecrets: []
 nameOverride: ""
@@ -59,6 +59,8 @@ tolerations: []
 
 affinity: {}
 
+topologySpreadConstraints: []
+
 metrics:
   enabled: true
   podAnnotations:
@@ -80,7 +82,7 @@ dynamodb:
   image:
     repository: amazon/dynamodb-local
     pullPolicy: IfNotPresent
-    tag: "1.13.1"
+    tag: "1.20.0"
 
   service:
     type: ClusterIP
@@ -97,3 +99,8 @@ dynamodb:
 opentelemetry:
   enabled: false
   instrumentation: ""
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 2
+  maxUnavailable: 1

@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: public.ecr.aws/aws-containers/retail-store-sample-ui
   pullPolicy: IfNotPresent
-  tag: 0.8.2
+  tag: 0.8.4
 
 imagePullSecrets: []
 nameOverride: ""
@@ -60,6 +60,8 @@ tolerations: []
 
 affinity: {}
 
+topologySpreadConstraints: []
+
 metrics:
   enabled: true
   podAnnotations:
@@ -71,7 +73,8 @@ configMap:
   create: true
   name: # if blank this will be generated
 
-endpoints: {}
+endpoints:
+  {}
   #catalog: http://catalog:80
   #carts: http://carts:80
   #orders: http://orders:80
@@ -80,6 +83,24 @@ endpoints: {}
 ## Ingress for load balancer
 ingress:
   enabled: false
+  # className: ""
+  annotations: {}
+  #   alb.ingress.kubernetes.io/scheme: internet-facing
+  #   alb.ingress.kubernetes.io/target-type: ip
+  #   alb.ingress.kubernetes.io/healthcheck-path: /actuator/health/liveness
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+  hosts: []
+  #  - "chart-example.local"
+
+ingresses: []
+  # - name: default
+  #   className: ""
+  #   hosts: []
+  #   annotations: {}
+  #   tls: []
 
 istio:
   enabled: false
@@ -88,3 +109,8 @@ istio:
 opentelemetry:
   enabled: false
   instrumentation: ""
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 2
+  maxUnavailable: 1

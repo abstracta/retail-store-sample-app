@@ -27,6 +27,10 @@ spec:
       labels:
         {{- include "assets.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -35,7 +39,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ "assets" }}
           envFrom:
             - configMapRef:
                 name: {{ include "assets.configMapName" . }}

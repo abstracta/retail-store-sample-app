@@ -2603,7 +2603,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ----
 
-### char-regex @1.0.2 - 
+### char-regex @1.0.2 - https://github.com/Richienb/char-regex#readme
 
 MIT License
 
@@ -3737,7 +3737,7 @@ SOFTWARE.
 
 ----
 
-### cross-spawn @7.0.3 - https://github.com/moxystudio/node-cross-spawn
+### cross-spawn @7.0.6 - https://github.com/moxystudio/node-cross-spawn
 
 The MIT License (MIT)
 
@@ -3762,7 +3762,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-[Source code](https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.3.tgz)
+[Source code](https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz)
 
 ----
 
@@ -17294,11 +17294,11 @@ SOFTWARE.
 
 ----
 
-### systeminformation @5.21.8 - https://systeminformation.io
+### systeminformation @5.23.14 - https://systeminformation.io
 
 The MIT License (MIT)
 
-Copyright (c) 2014-2023 Sebastian Hildebrandt
+Copyright (c) 2014-2024 Sebastian Hildebrandt
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -17318,7 +17318,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-[Source code](https://registry.npmjs.org/systeminformation/-/systeminformation-5.21.8.tgz)
+[Source code](https://registry.npmjs.org/systeminformation/-/systeminformation-5.23.14.tgz)
 
 ----
 
@@ -22921,7 +22921,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ----
 
-### @nodelib:fs.scandir @2.1.5 - https://github.com/nodelib/nodelib/tree/master#readme
+### @nodelib:fs.scandir @2.1.5 - 
 
 The MIT License (MIT)
 
@@ -22950,7 +22950,7 @@ SOFTWARE.
 
 ----
 
-### @nodelib:fs.stat @2.0.5 - https://github.com/nodelib/nodelib/tree/master#readme
+### @nodelib:fs.stat @2.0.5 - 
 
 The MIT License (MIT)
 
@@ -22979,7 +22979,7 @@ SOFTWARE.
 
 ----
 
-### @nodelib:fs.walk @1.2.8 - https://github.com/nodelib/nodelib/tree/master#readme
+### @nodelib:fs.walk @1.2.8 - 
 
 The MIT License (MIT)
 

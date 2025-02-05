@@ -3903,7 +3903,7 @@ info@rabbitmq.com.
 
 ----
 
-### io.awspring.cloud:spring-cloud-aws-autoconfigure @3.2.0 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-autoconfigure
+### io.awspring.cloud:spring-cloud-aws-autoconfigure @3.2.1 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-autoconfigure
 
 
                                  Apache License
@@ -4109,11 +4109,11 @@ info@rabbitmq.com.
    limitations under the License.
 
 
-[Source code](https://repo.maven.apache.org/maven2/io/awspring/cloud/spring-cloud-aws-autoconfigure/3.2.0/spring-cloud-aws-autoconfigure-3.2.0-sources.jar)
+[Source code](https://repo.maven.apache.org/maven2/io/awspring/cloud/spring-cloud-aws-autoconfigure/3.2.1/spring-cloud-aws-autoconfigure-3.2.1-sources.jar)
 
 ----
 
-### io.awspring.cloud:spring-cloud-aws-core @3.2.0 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-core
+### io.awspring.cloud:spring-cloud-aws-core @3.2.1 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-core
 
 
                                  Apache License
@@ -4319,11 +4319,11 @@ info@rabbitmq.com.
    limitations under the License.
 
 
-[Source code](https://repo.maven.apache.org/maven2/io/awspring/cloud/spring-cloud-aws-core/3.2.0/spring-cloud-aws-core-3.2.0-sources.jar)
+[Source code](https://repo.maven.apache.org/maven2/io/awspring/cloud/spring-cloud-aws-core/3.2.1/spring-cloud-aws-core-3.2.1-sources.jar)
 
 ----
 
-### io.awspring.cloud:spring-cloud-aws-sqs @3.2.0 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-sqs
+### io.awspring.cloud:spring-cloud-aws-sqs @3.2.1 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-sqs
 
 
                                  Apache License
@@ -4529,11 +4529,11 @@ info@rabbitmq.com.
    limitations under the License.
 
 
-[Source code](https://repo.maven.apache.org/maven2/io/awspring/cloud/spring-cloud-aws-sqs/3.2.0/spring-cloud-aws-sqs-3.2.0-sources.jar)
+[Source code](https://repo.maven.apache.org/maven2/io/awspring/cloud/spring-cloud-aws-sqs/3.2.1/spring-cloud-aws-sqs-3.2.1-sources.jar)
 
 ----
 
-### io.awspring.cloud:spring-cloud-aws-starter @3.2.0 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-starters/spring-cloud-aws-starter
+### io.awspring.cloud:spring-cloud-aws-starter @3.2.1 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-starters/spring-cloud-aws-starter
 
 
                                  Apache License
@@ -4743,7 +4743,7 @@ info@rabbitmq.com.
 
 ----
 
-### io.awspring.cloud:spring-cloud-aws-starter-sqs @3.2.0 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-starters/spring-cloud-aws-starter-sqs
+### io.awspring.cloud:spring-cloud-aws-starter-sqs @3.2.1 - https://spring.io/spring-cloud/spring-cloud-aws/spring-cloud-aws-starters/spring-cloud-aws-starter-sqs
 
 
                                  Apache License
@@ -18752,7 +18752,7 @@ You may add additional accurate notices of copyright ownership.
 
 ----
 
-### org.mapstruct:mapstruct @1.6.2 - https://mapstruct.org/mapstruct/
+### org.mapstruct:mapstruct @1.6.3 - https://mapstruct.org/mapstruct/
 
  Copyright MapStruct Authors.
 
@@ -18784,11 +18784,11 @@ You may add additional accurate notices of copyright ownership.
      freemarker/ext/jsp/web-jsptaglibrary_2_1.xsd
 
 
-[Source code](https://repo.maven.apache.org/maven2/org/mapstruct/mapstruct/1.6.2/mapstruct-1.6.2-sources.jar)
+[Source code](https://repo.maven.apache.org/maven2/org/mapstruct/mapstruct/1.6.3/mapstruct-1.6.3-sources.jar)
 
 ----
 
-### org.mapstruct:mapstruct-processor @1.6.2 - https://mapstruct.org/mapstruct-processor/
+### org.mapstruct:mapstruct-processor @1.6.3 - https://mapstruct.org/mapstruct-processor/
 
  Copyright MapStruct Authors.
 
@@ -18820,7 +18820,7 @@ You may add additional accurate notices of copyright ownership.
      freemarker/ext/jsp/web-jsptaglibrary_2_1.xsd
 
 
-[Source code](https://repo.maven.apache.org/maven2/org/mapstruct/mapstruct-processor/1.6.2/mapstruct-processor-1.6.2-sources.jar)
+[Source code](https://repo.maven.apache.org/maven2/org/mapstruct/mapstruct-processor/1.6.3/mapstruct-processor-1.6.3-sources.jar)
 
 ----
 

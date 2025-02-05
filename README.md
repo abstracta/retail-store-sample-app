@@ -5,9 +5,9 @@ This is a sample application designed to illustrate various concepts related to 
 It provides:
 
 - A distributed component architecture in various languages and frameworks
-- Utilization of a variety of different persistence backends for different components like MySQL, DynamoDB and Redis
+- Utilization of a variety of different persistence backends for different components like MariaDB (or MySQL), DynamoDB and Redis
 - The ability to run in various container orchestration technologies like Docker Compose, Kubernetes etc.
-- Pre-built containers image for both x86-64 and ARM64 CPU architectures
+- Pre-built container images for both x86-64 and ARM64 CPU architectures
 - All components instrumented for Prometheus metrics and OpenTelemetry OTLP tracing
 - Support for Istio on Kubernetes
 - Load generator which exercises all of the infrastructure
@@ -34,6 +34,17 @@ The application has been deliberately over-engineered to generate multiple de-co
 ## Quickstart
 
 The following sections provide quickstart instructions for various platforms. All of these assume that you have cloned this repository locally and are using a CLI thats current directory is the root of the code repository.
+
+### Terraform
+
+The following options are available to deploy the application using Terraform:
+
+| Name                                                    | Description                                                                                                     |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [Amazon EKS](./deploy/terraform/eks/default/)           | Deploys the application to Amazon EKS using other AWS services for dependencies, such as RDS, DynamoDB etc.     |
+| [Amazon EKS (Minimal)](./deploy/terraform/eks/minimal/) | Deploys the application to Amazon EKS using in-cluster dependencies instead of RDS, DynamoDB etc.               |
+| [Amazon ECS](./deploy/terraform/ecs/default/)           | Deploys the application to Amazon ECS using other AWS services for dependencies, such as RDS, DynamoDB etc.     |
+| [AWS App Runner](./deploy/terraform/apprunner/)         | Deploys the application to AWS App Runner using other AWS services for dependencies, such as RDS, DynamoDB etc. |
 
 ### Kubernetes
 
@@ -78,6 +89,7 @@ cd dist/docker-compose
 ```
 
 Log in to the public ECR registry by following the instructions on the [AWS ECR documentation](https://docs.aws.amazon.com/AmazonECR/latest/public/public-registry-auth.html#public-registry-auth-token):
+
 ```
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 ```
@@ -135,4 +147,5 @@ DEPENDENCIES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, EVEN
 IF AMAZON HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THESE LIMITATIONS
 AND DISCLAIMERS APPLY EXCEPT TO THE EXTENT PROHIBITED BY APPLICABLE LAW.
 
+MariaDB Community License - [LICENSE](https://mariadb.com/kb/en/mariadb-licenses/)
 MySQL Community Edition - [LICENSE](https://github.com/mysql/mysql-server/blob/8.0/LICENSE)

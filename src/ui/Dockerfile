@@ -40,6 +40,11 @@ RUN dnf --setopt=install_weak_deps=False install -q -y \
     && \
     dnf clean all
 
+# use curl-full to use "telnet://" scheme
+# https://docs.aws.amazon.com/linux/al2023/ug/curl-minimal.html
+RUN dnf -q -y swap libcurl-minimal libcurl-full \
+    && dnf -q -y swap curl-minimal curl-full
+
 ENV APPUSER=appuser
 ENV APPUID=1000
 ENV APPGID=1000

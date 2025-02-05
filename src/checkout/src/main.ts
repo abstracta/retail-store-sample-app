@@ -28,7 +28,7 @@ agent.start();
 async function bootstrap() {
   // Start SDK before nestjs factory create
   await otelSDK.start();
-  
+
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
 
@@ -44,7 +44,7 @@ async function bootstrap() {
   // Starts listening for shutdown hooks
   app.enableShutdownHooks();
 
-  const port = process.env.PORT || 8080
+  const port = process.env.PORT || 8080;
 
   await app.listen(port);
 }
