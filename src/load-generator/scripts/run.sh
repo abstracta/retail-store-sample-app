@@ -18,6 +18,7 @@ Available options:
 -q, --quiet      Reduce log output
 -t, --target     Target URL to use for the test (default: http://localhost:8888)
 --vu             Number of virtual users to run (default: 1)
+--vars           Set script variables in json string
 -d, --duration   Duration of the test in seconds (default: forever)
 -c, --container  Run the load test in a container (default: directly invokes npm)
 
@@ -57,6 +58,7 @@ parse_params() {
   target='http://localhost:8888'
   duration='0'
   vus='1'
+  vars=''
 
   while :; do
     case "${1-}" in
@@ -71,6 +73,10 @@ parse_params() {
       ;;
     -d | --duration)
       duration="${2-}"
+      shift
+      ;;
+    --vars)
+      vars="${2-}"
       shift
       ;;
     --vu)
@@ -97,7 +103,7 @@ msg "Performing pre-check on ${BLUE}$target/home${NOFORMAT}..."
 
 status_code=$(curl --write-out '%{http_code}' --silent --output /dev/null $target/home)
 
-if [[ "$status_code" -ne 200 ]] ; then
+if [[ "$status_code" -ne 200 && "$status_code" -ne 302 ]] ; then
   msg "${RED}Error:${NOFORMAT} Target $target returned HTTP code $status_code, are you sure its up?"
   exit 1
 fi
@@ -117,11 +123,11 @@ if [ "$container" = true ]; then
 
   docker run --rm -v $script_dir/../:/scripts \
     artilleryio/artillery:2.0.0-31 \
-    run -t $target $quiet_args --overrides "$overrides_args" /scripts/scenario.yml 
+    run -t $target $quiet_args --overrides "$overrides_args" -v "$vars" /scripts/scenario.yml
 else
   msg "Running in ${BLUE}default mode${NOFORMAT}..."
 
-  npm run generator -- -t $target $quiet_args --overrides "$overrides_args"
+  npm run generator -- -t $target $quiet_args --overrides "$overrides_args" -v "$vars"
 fi
 
 msg 'Done!'

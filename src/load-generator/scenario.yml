@@ -7,31 +7,40 @@ config:
 
 scenarios:
   - name: "Test"
-    beforeScenario: getAllProducts
+    beforeScenario:
+      - getAllProducts
+      - solveAccessToken
     flow:
       - get:
           url: "/home"
+          beforeRequest: addRequestAuth
       - think: 1
       - get:
           url: "/catalog"
+          beforeRequest: addRequestAuth
       - think: 2
       - loop:
           - get:
               url: "/catalog/{{ $loopElement }}"
+              beforeRequest: addRequestAuth
           - think: 1
         over: allProducts
       - think: 1
       - post:
           url: "/cart"
-          beforeRequest: setRandomProductId
+          beforeRequest:
+            - setRandomProductId
+            - addRequestAuth
           form:
             productId: "dummy"
       - think: 1
       - get:
           url: "/cart"
+          beforeRequest: addRequestAuth
       - think: 2
       - get:
           url: "/checkout"
+          beforeRequest: addRequestAuth
       - think: 3
       - post:
           url: "/checkout"
@@ -44,11 +53,14 @@ scenarios:
             city: New York
             state: NY
             zip: 12345
+          beforeRequest: addRequestAuth
       - think: 2
       - post:
           url: "/checkout/delivery"
           form:
             token: priority-mail
+          beforeRequest: addRequestAuth
       - think: 2
       - post:
           url: "/checkout/confirm"
+          beforeRequest: addRequestAuth
