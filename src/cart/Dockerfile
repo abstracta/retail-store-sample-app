@@ -52,7 +52,7 @@ RUN useradd \
     "$APPUSER"
 
 ARG SKYWALKING_AGENT_VERSION=9.3.0
-RUN curl -L https://dlcdn.apache.org/skywalking/java-agent/${SKYWALKING_AGENT_VERSION}/apache-skywalking-java-agent-${SKYWALKING_AGENT_VERSION}.tgz -o /tmp/skywalking-agent.tgz && \
+RUN curl -L https://archive.apache.org/dist/skywalking/java-agent/${SKYWALKING_AGENT_VERSION}/apache-skywalking-java-agent-${SKYWALKING_AGENT_VERSION}.tgz -o /tmp/skywalking-agent.tgz && \
     tar -xzf /tmp/skywalking-agent.tgz -C /opt/ && \
     rm /tmp/skywalking-agent.tgz
 RUN chown -R appuser:appuser /opt/skywalking-agent
